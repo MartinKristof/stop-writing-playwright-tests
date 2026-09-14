@@ -27,9 +27,9 @@ of that step; the fork is what to copy afterwards.
 
 **On timing:** do not run the generator twice on stage. Record both ahead of time in one session, play
 the unforked run in full, then cut to the forked run's output as a thirty-second comparison, a flat
-`page.click(...)` spec beside the page-object one. Show the diff between the two agent files: 77 lines
-added, 31 removed. The instruction is four bullets; the rest is a catalogue of five page-object classes
-with every public method, which is the point.
+`page.click(...)` spec beside the page-object one. Show the diff between the two agent files: 60 lines
+added, 31 removed, almost all of it four bullets telling the agent to read `tests/pages/index.ts` and
+the classes it exports, which is the point.
 
 ## Preflight, before typing anything
 
@@ -140,9 +140,14 @@ Playwright tool to manually execute it in real-time", then `generator_read_log`,
 `generator_write_test`. The spec is a transcript of actions that actually worked, not a guess.
 
 *The unforked generator does not mention page objects at all.* Its example writes flat `page.click(...)`
-calls with no imports. `forked-generator` adds a four-bullet instruction to read `tests/pages/`, reuse
-the methods, and create a page object if none fits, and then about seventy lines cataloguing the five
-classes and their methods. **Show that diff between the two agent files.**
+calls with no imports. `forked-generator` adds four bullets: read `tests/pages/index.ts` and the classes
+it exports, treat those classes as the authority rather than any summary, reuse their methods, add a
+class if none fits. **Show that diff between the two agent files.**
+
+*It used to carry a catalogue of the five classes and every public method, and that is worth saying out
+loud.* Seventy lines of it, and within weeks it was five methods behind the code, including the ones the
+generated spec actually calls. Knowledge you add to an agent has to be a pointer into the code, not a
+copy of it, or it rots while still sounding authoritative.
 
 The `testDir` point belongs here, because it is why that fourth line works at all: this repository sets
 no `testDir`, so the write sandbox is the whole repository and `tests/pages/` is inside it. Set
