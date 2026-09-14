@@ -1,6 +1,6 @@
 ---
-name: test-generator-pom
-description: Use this agent when you need to create automated browser tests using Playwright with Page Object Model. Prefer this over the standard generator when POM classes exist in tests/pages/. Examples: <example>Context: User wants to test a login flow on SauceDemo. user: 'Generate tests from spec/plan.md using POM' assistant: 'I'll use the generator-pom agent to create tests with Page Object Model classes' <commentary>The user wants POM-based tests, use this agent instead of the standard generator.</commentary></example>
+name: forked-generator
+description: Use this agent when you need to create automated browser tests using Playwright with Page Object Model. Prefer this over the standard generator when POM classes exist in tests/pages/. Examples: <example>Context: User wants to test a login flow on SauceDemo. user: 'Generate tests from spec/plan.md using POM' assistant: 'I'll use the forked generator to create tests with Page Object Model classes' <commentary>The user wants POM-based tests, use this agent instead of the standard generator.</commentary></example>
 tools: Glob, Grep, Read, mcp__playwright-test__browser_click, mcp__playwright-test__browser_drag, mcp__playwright-test__browser_evaluate, mcp__playwright-test__browser_file_upload, mcp__playwright-test__browser_handle_dialog, mcp__playwright-test__browser_hover, mcp__playwright-test__browser_navigate, mcp__playwright-test__browser_press_key, mcp__playwright-test__browser_select_option, mcp__playwright-test__browser_snapshot, mcp__playwright-test__browser_type, mcp__playwright-test__browser_verify_element_visible, mcp__playwright-test__browser_verify_list_visible, mcp__playwright-test__browser_verify_text_visible, mcp__playwright-test__browser_verify_value, mcp__playwright-test__browser_wait_for, mcp__playwright-test__generator_read_log, mcp__playwright-test__generator_setup_page, mcp__playwright-test__generator_write_test
 model: sonnet
 color: blue
@@ -51,10 +51,10 @@ The following POM classes are available in `tests/pages/`:
   - Methods: `goto()`, `fillUsername(username)`, `fillPassword(password)`, `clickLogin()`, `login(username, password)`, `getErrorMessage()`, `expectErrorMessage(text)`, `expectErrorVisible()`
 
 - **InventoryPage.ts**: Product inventory page (after login)
-  - Methods: `waitForLoad()`, `expectPageTitle()`, `expectPageLoaded()`, `expectBurgerMenuVisible()`, `getProductCount()`, `getCartBadgeCount()`, `expectCartBadgeCount(count)`, `clickProduct(index)`, `clickShoppingCart()`, `addProductToCart(index)`, `getProductName(index)`
+  - Methods: `goto()`, `waitForLoad()`, `expectPageTitle()`, `expectPageLoaded()`, `expectBurgerMenuVisible()`, `getProductCount()`, `getCartBadgeCount()`, `expectCartBadgeCount(count)`, `clickProduct(index)`, `clickShoppingCart()`, `addProductToCart(index)`, `addProductToCartByName(name)`, `expectProductInCart(name)`, `getProductName(index)`
 
 - **CartPage.ts**: Shopping cart page
-  - Methods: `goto()`, `clickCheckout()`, `clickContinueShopping()`, `getItemCount()`, `getItemNames()`, `removeItem(index)`, `expectItemCount(count)`, `expectItemInCart(name)`
+  - Methods: `goto()`, `expectPageLoaded()`, `expectCartBadgeCount(count)`, `clickCheckout()`, `clickContinueShopping()`, `getItemCount()`, `getItemNames()`, `removeItem(index)`, `removeItemByName(name)`, `expectItemCount(count)`, `expectItemInCart(name)`, `expectItemNotInCart(name)`, `expectItemDetails(name, price, quantity)`
 
 - **CheckoutPage.ts**: Checkout process pages
   - Methods: `fillCheckoutInfo(firstName, lastName, postalCode)`, `clickContinue()`, `clickFinish()`, `completeCheckout(firstName, lastName, postalCode)`, `expectOrderConfirmation()`, `expectCompleteText()`, `clickBackHome()`

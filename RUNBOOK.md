@@ -13,14 +13,17 @@ repository are forked, and each fork adds project knowledge the agent could not 
 
 | agent | shipped or forked | what the fork adds |
 | --- | --- | --- |
-| planner | forked as `test-planner-seed` | when the seed applies: only to sections that need a signed-in user, never to the login or access-control sections |
-| generator | forked as `test-generator-pom` | read `tests/pages/`, reuse the methods, create a page object if none fits |
-| healer | **unforked** | nothing; it needed no fork |
+| planner | forked as `forked-planner` | when the seed applies: only to sections that need a signed-in user, never to the login or access-control sections |
+| generator | forked as `forked-generator` | read `tests/pages/`, reuse the methods, create a page object if none fits |
+| healer | `forked-healer`, **not used in the demo** | may answer "the app is wrong"; same tool list, all of it in the brief |
 
 That is the "where human judgment is still essential" argument in one table. Playwright's planner cannot
 know this app authenticates through a seed, and certainly cannot know that the login section must
-**not** use it. Its generator has no notion of a page object at all. And the healer worked out of the
-box.
+**not** use it. Its generator has no notion of a page object at all. Its healer needs no project
+knowledge and gets none: `forked-healer` has the same tool list, character for character, and differs
+only in what the brief allows it to conclude. **The demo runs the shipped healer**, because watching
+"do the most reasonable thing possible to pass the test" write a defect into a page object is the point
+of that step; the fork is what to copy afterwards.
 
 **On timing:** do not run the generator twice on stage. Record both ahead of time in one session, play
 the unforked run in full, then cut to the forked run's output as a thirty-second comparison, a flat
@@ -80,7 +83,7 @@ explicitly makes the stub not happen at all.
 For the agents, the fix is the same parameter, now passed by the two forks:
 
 ```bash
-grep -n 'project: "setup"' .claude/agents/test-planner-seed.md .claude/agents/test-generator-pom.md
+grep -n 'project: "setup"' .claude/agents/forked-planner.md .claude/agents/forked-generator.md
 ```
 
 The unforked agents pass neither, so they still write the stub and plan against a blank page. **Leave
@@ -93,7 +96,7 @@ configured is gone.
 ## 1. Planner
 
 ```
-Use the test-planner-seed subagent. Plan Playwright E2E coverage for the shopping cart in this
+Use the forked-planner subagent. Plan Playwright E2E coverage for the shopping cart in this
 app. Cover exactly one scenario and no more: a signed-in user adds two products to the cart, the cart
 badge shows the count, the cart page lists both products, and removing one leaves the other. Login,
 checkout, sorting and the burger menu are out of scope. Use tests/auth.seed.spec.ts as the seed: it
@@ -124,7 +127,7 @@ watching it find them is the demo.
 ## 2. Generator
 
 ```
-Use the test-generator-pom subagent. Generate the coverage from the plan at spec/cart.md.
+Use the forked-generator subagent. Generate the coverage from the plan at spec/cart.md.
 ```
 
 That is the whole prompt. Everything else is in the agent definition, and pointing that out on stage is
@@ -137,7 +140,7 @@ Playwright tool to manually execute it in real-time", then `generator_read_log`,
 `generator_write_test`. The spec is a transcript of actions that actually worked, not a guess.
 
 *The unforked generator does not mention page objects at all.* Its example writes flat `page.click(...)`
-calls with no imports. `test-generator-pom` adds a four-bullet instruction to read `tests/pages/`, reuse
+calls with no imports. `forked-generator` adds a four-bullet instruction to read `tests/pages/`, reuse
 the methods, and create a page object if none fits, and then about seventy lines cataloguing the five
 classes and their methods. **Show that diff between the two agent files.**
 

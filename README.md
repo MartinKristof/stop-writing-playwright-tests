@@ -53,20 +53,33 @@ what lets the forked generator reach `tests/pages/`.
 
 ## Agents
 
+Three agents as Playwright ships them, and a fork of each.
+
 | agent | shipped or forked | what the fork adds |
 | --- | --- | --- |
 | `playwright-test-planner` | shipped | |
 | `playwright-test-generator` | shipped | |
 | `playwright-test-healer` | shipped | |
-| `test-planner-seed` | forked planner | when the seed applies, and when it must not |
-| `test-generator-pom` | forked generator | read `tests/pages/`, reuse the methods, add one if none fits |
+| `forked-planner` | forked planner | when the seed applies, and when it must not |
+| `forked-generator` | forked generator | read `tests/pages/`, reuse the methods, add one if none fits |
+| `forked-healer` | forked healer | diagnose the cause, and report an application bug rather than write it into the test |
 
-Both forks pass `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"` to their setup tool. The
-unforked agents pass neither, which is why they write a `seed.spec.ts` stub at the repository root and
-then drive a blank page. That failure is part of the demo, so they stay as they are.
+The first two forks add project knowledge the agent could not have discovered. The third adds none: its
+tool list is character for character the shipped healer's, and every difference is in the brief. It may
+answer "the application is wrong", which the shipped healer's brief never allows, and like the shipped
+one it is forbidden to ask you questions. That difference is what the talk is about.
 
-`npx playwright init-agents --loop claude` rewrites `.mcp.json` wholesale and writes that stub. Run
-`rm -f seed.spec.ts` after it, and after any run of an unforked agent.
+**The demo runs the shipped healer, not the fork.** Watching a brief that says "do the most reasonable
+thing possible to pass the test" write a defect into a page object is the point of that step. The fork
+is here as the thing to copy afterwards.
+
+The planner and generator forks pass `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"` to
+their setup tool. The shipped agents pass neither, which is why they write a `seed.spec.ts` stub at the
+repository root and then drive a blank page. That failure is part of the demo, so they stay as they are.
+
+`npx playwright init-agents --loop claude` rewrites the three shipped agents and `.mcp.json` wholesale,
+leaves the three forks alone, and writes that stub. Run `rm -f seed.spec.ts` after it, and after any run
+of an unforked agent.
 
 ## Test accounts
 
