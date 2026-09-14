@@ -211,8 +211,14 @@ Its one escape hatch, `test.fixme()`, is conditioned on "if the error persists",
 the carta drift is trivially passable, so the agent never reaches the branch where it is allowed to
 conclude the test was right.
 
-That line is unchanged in `playwright@1.64.0-alpha-2026-09-04`; the diff against 1.56.1 is two renamed
-tool names and a trailing newline. Meanwhile `playwright-cli install --skills` ships
+That line, and the remediation list above it, are byte-identical in 1.56.1, in today's stable 1.63.0 and
+in `playwright@1.64.0-alpha-2026-09-04`. The 1.63.0 file does differ from 1.56.1, by 34 lines: the agent
+is renamed, `ls/grep/read/write` in its tool list becomes `search` plus `browser_network_request`, two
+tool calls in the workflow are renamed (`playwright_test_run_test` to `test_run`,
+`playwright_test_debug_test` to `test_debug`), and two example blocks are dropped from the body. None of
+it touches the mandate. The seed-stub behaviour is unchanged too: 1.63.0 still picks
+`findTopLevelProjects(config)[0]` when no project is named, still searches for a basename containing
+"seed", and still writes the same stub. Meanwhile `playwright-cli install --skills` ships
 `references/test-generation.md`, covering the same plan, generate, heal pipeline, whose heal section says
 to **stop and ask the user** when it cannot tell a stale spec from a regression. Two official paths,
 opposite mandates. The `cli` branch of this repository is that second path, set up the same way.
