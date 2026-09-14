@@ -1,7 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "mcp__playwright-test__*",
       "Bash",
       "Read",
       "Write",
@@ -10,8 +9,5 @@
       "Glob",
       "Grep"
     ]
-  },
-  "enabledMcpjsonServers": [
-    "playwright-test"
-  ]
+  }
 }

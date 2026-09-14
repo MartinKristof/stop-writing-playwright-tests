@@ -1,7 +1,7 @@
 {
   "name": "ai-driven-testing",
   "version": "1.0.0",
-  "description": "Playwright demo repo for the talk: Playwright agents against a local SauceDemo clone.",
+  "description": "Playwright demo repo, CLI variant: the playwright-cli skill instead of the MCP subagents.",
   "private": true,
   "scripts": {
     "playwright:install": "playwright install --with-deps",
@@ -27,7 +27,8 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
+    "@playwright/cli": "0.1.19",
+    "@playwright/test": "1.64.0-alpha-2026-09-04",
     "@types/node": "^24.10.1",
     "dotenv": "^17.2.3",
     "typescript": "^5.9.3"

@@ -1,11 +1,15 @@
-# Stop Writing Playwright Tests: Let AI Generate Them
+# Stop Writing Playwright Tests: the CLI variant
 
-The repository used on stage in the talk. A small Playwright suite for SauceDemo, driven by Playwright's
-own agents through the test MCP server.
+The CLI half of the stage demo. Same suite, same app, same seed as `main`, but the browser is reached
+through the `playwright-cli` skill instead of three subagents over the test MCP server.
 
-`RUNBOOK.md` has the three prompts, what each step is meant to show, and the traps worth knowing about.
-The `cli` branch is the same demo driven by the `playwright-cli` skill instead of three subagents:
-`git diff main cli` is the whole difference.
+Branched from `main`, and `git diff main cli` is the whole difference: Playwright moves to the 1.64
+alpha, `@playwright/cli` is installed, `.claude/skills/playwright-cli/` holds the skill, and there is
+no `.mcp.json` and no `.claude/agents/`.
+
+    npx playwright-cli install --skills   # reinstalls the skill in place
+
+`RUNBOOK.md` has the prompts and what each step is meant to show.
 
 ## Layout
 
@@ -13,11 +17,10 @@ The `cli` branch is the same demo driven by the `playwright-cli` skill instead o
 tests/
   auth.seed.spec.ts   the seed: signs in and saves .auth/user.json
   cart.spec.ts        the generated cart coverage
-  pages/              page objects, what the forked generator reuses
+  pages/              page objects
 spec/                 generated test plans (gitignored)
-.claude/agents/       Playwright's three agents plus two forks
+.claude/skills/       the playwright-cli skill and its references
 .claude/settings.json tool permissions
-.mcp.json             the playwright-test MCP server
 ```
 
 ## The app under test
@@ -51,22 +54,12 @@ npm test                 # 2 tests, green in about 5 s
 ignores the seed file. There is no `testDir`, so the whole repo is the agents' write sandbox, which is
 what lets the forked generator reach `tests/pages/`.
 
-## Agents
+## The skill
 
-| agent | shipped or forked | what the fork adds |
-| --- | --- | --- |
-| `playwright-test-planner` | shipped | |
-| `playwright-test-generator` | shipped | |
-| `playwright-test-healer` | shipped | |
-| `test-planner-seed` | forked planner | when the seed applies, and when it must not |
-| `test-generator-pom` | forked generator | read `tests/pages/`, reuse the methods, add one if none fits |
-
-Both forks pass `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"` to their setup tool. The
-unforked agents pass neither, which is why they write a `seed.spec.ts` stub at the repository root and
-then drive a blank page. That failure is part of the demo, so they stay as they are.
-
-`npx playwright init-agents --loop claude` rewrites `.mcp.json` wholesale and writes that stub. Run
-`rm -f seed.spec.ts` after it, and after any run of an unforked agent.
+`.claude/skills/playwright-cli/SKILL.md` plus ten reference files. `references/test-generation.md`
+covers the same plan, generate, heal pipeline as the three subagents, and its heal step tells the
+agent to stop and ask the user when it cannot tell a stale spec from a regression. It drives a page by
+running `npx playwright test --debug=cli` in the background and attaching to the paused test.
 
 ## Test accounts
 
