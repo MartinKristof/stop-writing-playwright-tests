@@ -1,0 +1,35 @@
+{
+  "name": "ai-driven-testing",
+  "version": "1.0.0",
+  "description": "Playwright demo repo for the talk: Playwright agents against a local SauceDemo clone.",
+  "private": true,
+  "scripts": {
+    "playwright:install": "playwright install --with-deps",
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:report": "playwright show-report"
+  },
+  "keywords": [
+    "playwright",
+    "testing",
+    "ai",
+    "agents",
+    "mcp"
+  ],
+  "author": "Martin Krištof",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apify-projects/ai-driven-testing.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.10.1",
+    "dotenv": "^17.2.3",
+    "typescript": "^5.9.3"
+  }
+}
