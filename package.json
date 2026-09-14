@@ -1,5 +1,5 @@
 {
-  "name": "ai-driven-testing",
+  "name": "stop-writing-playwright-tests",
   "version": "1.0.0",
   "description": "Playwright demo repo for the talk: Playwright agents against a local SauceDemo clone.",
   "private": true,
@@ -21,7 +21,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/apify-projects/ai-driven-testing.git"
+    "url": "https://github.com/MartinKristof/stop-writing-playwright-tests.git"
   },
   "engines": {
     "node": ">=20"
