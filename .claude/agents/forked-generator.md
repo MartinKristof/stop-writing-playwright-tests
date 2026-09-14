@@ -12,10 +12,13 @@ Your specialty is creating robust, reliable Playwright tests using Page Object M
 # For each test you generate
 
 - Obtain the test plan with all the steps and verification specification
-- **Before generating the test, check for existing Page Object Model classes:**
-  - Search for POM classes in `tests/pages/` directory
-  - Read them to understand available methods and structure
-  - If no relevant POM exists, create a new one following the pattern: extend `BasePage`, define locators, create public methods for interactions
+- **Before generating the test, read the Page Object Model layer:**
+  - `tests/pages/index.ts` exports every page object; read it, then read the classes it exports
+  - The classes are the authority on what exists and what it is called. Do not work from a summary,
+    including any list in this file, and do not guess a method name
+  - If no class covers the surface you need, add one following the pattern: extend `BasePage`, static
+    locators as properties, one public method per user step, compound assertions as `expect*` methods,
+    and export it from `index.ts`
 - Run the `generator_setup_page` tool to set up page for the scenario, always with
   `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"`. Omitting `project` makes the tool fall
   back to the first top-level project, which ignores the seed and generates against a blank page.
@@ -39,26 +42,6 @@ Your specialty is creating robust, reliable Playwright tests using Page Object M
 
 - For **`standard_user`**: do NOT add a login step. The seed `tests/auth.seed.spec.ts` pre-authenticates and saves storage state to `.auth/user.json`. Tests run under the `logged user` project, which loads this state automatically – the test starts already logged in.
 - For **any other user** (`problem_user`, `visual_user`, `performance_glitch_user`, etc.): add an explicit login step using `LoginPage.login(username, 'secret_sauce')` at the start of the test.
-
-## Available Page Object Model Classes
-
-The following POM classes are available in `tests/pages/`:
-
-- **BasePage.ts**: Base class for all page objects
-  - Methods: `goto(url)`, `getTitle()`, `waitForURL(pattern)`
-
-- **LoginPage.ts**: Sauce Demo login page
-  - Methods: `goto()`, `fillUsername(username)`, `fillPassword(password)`, `clickLogin()`, `login(username, password)`, `getErrorMessage()`, `expectErrorMessage(text)`, `expectErrorVisible()`
-
-- **InventoryPage.ts**: Product inventory page (after login)
-  - Methods: `goto()`, `waitForLoad()`, `expectPageTitle()`, `expectPageLoaded()`, `expectBurgerMenuVisible()`, `getProductCount()`, `getCartBadgeCount()`, `expectCartBadgeCount(count)`, `clickProduct(index)`, `clickShoppingCart()`, `addProductToCart(index)`, `addProductToCartByName(name)`, `expectProductInCart(name)`, `getProductName(index)`
-
-- **CartPage.ts**: Shopping cart page
-  - Methods: `goto()`, `expectPageLoaded()`, `expectCartBadgeCount(count)`, `clickCheckout()`, `clickContinueShopping()`, `getItemCount()`, `getItemNames()`, `removeItem(index)`, `removeItemByName(name)`, `expectItemCount(count)`, `expectItemInCart(name)`, `expectItemNotInCart(name)`, `expectItemDetails(name, price, quantity)`
-
-- **CheckoutPage.ts**: Checkout process pages
-  - Methods: `fillCheckoutInfo(firstName, lastName, postalCode)`, `clickContinue()`, `clickFinish()`, `completeCheckout(firstName, lastName, postalCode)`, `expectOrderConfirmation()`, `expectCompleteText()`, `clickBackHome()`
-  - Locators (use directly if needed): `cancelButton`, `cancelButtonOverview`
 
 <example-generation>
 For following plan:
