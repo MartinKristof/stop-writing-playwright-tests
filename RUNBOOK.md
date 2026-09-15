@@ -25,9 +25,11 @@ only in what the brief allows it to conclude. **The demo runs the shipped healer
 "do the most reasonable thing possible to pass the test" write a defect into a page object is the point
 of that step; the fork is what to copy afterwards.
 
-**On timing:** do not run the generator twice on stage. Record both ahead of time in one session, play
-the unforked run in full, then cut to the forked run's output as a thirty-second comparison, a flat
-`page.click(...)` spec beside the page-object one. Show the diff between the two agent files: 60 lines
+**On timing:** only Playwright's own agents need to go on video. Record the shipped planner and the
+shipped generator, play those, and show what the fork produced from the repository instead of recording
+it: the forked plan beside the shipped one, and the committed `tests/cart.spec.ts` beside the flat
+`page.click(...)` spec from the recording. Both generators run from the same plan, so the only variable
+is the agent. Show the diff between the two agent files: 60 lines
 added, 31 removed, almost all of it four bullets telling the agent to read `tests/pages/index.ts` and
 the classes it exports, which is the point.
 
