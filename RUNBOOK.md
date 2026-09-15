@@ -112,10 +112,15 @@ In one throwaway run that cost ten minutes and 47,000 output tokens for work nob
 mention a seed only inside an illustrative todo-app example, so they stay untouched. Saying the real path
 in the prompt as well makes a wrong plan visible rather than silent.
 
-*If you want the unforked planner instead*, swap the subagent name to `playwright-test-planner` and it
-will plan the same scenario without the seed rules. Running that first, seeing it attach the seed where
-it does not belong, and then switching to the fork is the strongest version of this step, if the budget
-allows it.
+**Run Playwright's planner first, with the same prompt.** Swap the subagent name to
+`playwright-test-planner` and give it the identical brief, seed path included. It never passes
+`project: "setup"` to `planner_setup_page`, so the tool falls back to the first top-level project,
+finds no seed, writes the stub and hands it a blank page. It then plans a page it never saw, and the
+seed path you wrote in the prompt changed nothing, because the fix is a parameter of a tool call rather
+than a sentence in a brief. Then run the fork on the same brief and show the two plans side by side.
+
+That order matters for the whole demo: show what Playwright ships, and let every fork arrive as a
+consequence of something that went wrong in front of the audience.
 
 *The out-of-scope list.* Cheaper than trusting "one scenario" alone, and it keeps the demo inside its
 slot.
