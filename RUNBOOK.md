@@ -97,8 +97,11 @@ configured is gone.
 
 ## 1. Planner
 
+The prompt you type on camera names Playwright's own planner. The fork runs the identical brief with
+one word changed, and its plan is the one already sitting in `spec/cart.md`.
+
 ```
-Use the forked-planner subagent. Plan Playwright E2E coverage for the shopping cart in this
+Use the playwright-test-planner subagent. Plan Playwright E2E coverage for the shopping cart in this
 app. Cover exactly one scenario and no more: a signed-in user adds two products to the cart, the cart
 badge shows the count, the cart page lists both products, and removing one leaves the other. Login,
 checkout, sorting and the burger menu are out of scope. Use tests/auth.seed.spec.ts as the seed: it
@@ -114,15 +117,16 @@ In one throwaway run that cost ten minutes and 47,000 output tokens for work nob
 mention a seed only inside an illustrative todo-app example, so they stay untouched. Saying the real path
 in the prompt as well makes a wrong plan visible rather than silent.
 
-**Run Playwright's planner first, with the same prompt.** Swap the subagent name to
-`playwright-test-planner` and give it the identical brief, seed path included. It never passes
-`project: "setup"` to `planner_setup_page`, so the tool falls back to the first top-level project,
-finds no seed, writes the stub and hands it a blank page. It then plans a page it never saw, and the
-seed path you wrote in the prompt changed nothing, because the fix is a parameter of a tool call rather
-than a sentence in a brief. Then run the fork on the same brief and show the two plans side by side.
+**What the recording shows.** Playwright's planner never passes `project: "setup"` to
+`planner_setup_page`, so the tool falls back to the first top-level project, finds no seed, writes the
+stub and hands it a blank page. It then plans a page it never saw, and the seed path you wrote in the
+prompt changed nothing, because the fix is a parameter of a tool call rather than a sentence in a
+brief.
 
-That order matters for the whole demo: show what Playwright ships, and let every fork arrive as a
-consequence of something that went wrong in front of the audience.
+**The fork is not recorded.** Its prompt is the same text with `forked-planner` in place of
+`playwright-test-planner`, and its plan is what `spec/cart.md` already holds, so put the two plans side
+by side instead of running it again. That order matters for the whole demo: show what Playwright ships,
+and let every fork arrive as a consequence of something that went wrong in front of the audience.
 
 *The out-of-scope list.* Cheaper than trusting "one scenario" alone, and it keeps the demo inside its
 slot.
@@ -134,11 +138,15 @@ watching it find them is the demo.
 ## 2. Generator
 
 ```
-Use the forked-generator subagent. Generate the coverage from the plan at spec/cart.md.
+Use the playwright-test-generator subagent. Generate the coverage from the plan at spec/cart.md.
 ```
 
-That is the whole prompt. Everything else is in the agent definition, and pointing that out on stage is
-worth more than a longer prompt: **the instructions live in a file you own and can edit**.
+That is the whole prompt, and the fork's is the same sentence with `forked-generator` in it. Everything
+else is in the agent definition, and pointing that out on stage is worth more than a longer prompt:
+**the instructions live in a file you own and can edit**.
+
+Only Playwright's generator goes on camera. Its output, a flat spec with no imports, belongs beside the
+committed `tests/cart.spec.ts`, which the fork produced from this same plan.
 
 Two things to say while it runs:
 
