@@ -5,7 +5,7 @@ import path from 'path';
 // Read from ".env" file.
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const SAUCE_DEMO_BASE_URL = process.env.SAUCE_DEMO_BASE_URL ?? 'https://www.saucedemo.com/';
+const SAUCE_DEMO_BASE_URL = process.env.SAUCE_DEMO_BASE_URL || 'https://www.saucedemo.com/';
 
 export default defineConfig({
   fullyParallel: true,
