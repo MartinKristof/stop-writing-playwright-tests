@@ -135,8 +135,18 @@ That is the whole prompt, and the fork's is the same sentence with `forked-gener
 else is in the agent definition, and pointing that out on stage is worth more than a longer prompt:
 **the instructions live in a file you own and can edit**.
 
-Only Playwright's generator goes on camera. Its output, a flat spec with no imports, belongs beside the
-committed `tests/cart.spec.ts`, which the fork produced.
+**Move `tests/cart.spec.ts` out of the way before this take, and put it back afterwards.** This is not
+tidiness, it decides the outcome. With the fork's spec sitting there, the shipped generator globs for
+specs, finds it, reads it, then reads all five page objects and copies the style, and the contrast the
+beat exists for disappears. With `tests/` holding only `pages/`, the same agent writes a flat spec with
+no imports, the URL hardcoded, and drops it at the repository root because no `testDir` is set.
+
+```bash
+mv tests/cart.spec.ts /tmp/cart-fork.spec.ts     # and back again when the take is done
+```
+
+Only Playwright's generator goes on camera. Its output, that flat spec, belongs beside the committed
+`tests/cart.spec.ts`, which the fork produced.
 
 Three things to say while it runs:
 
