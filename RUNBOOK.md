@@ -44,8 +44,16 @@ the classes it exports, which is the point.
 ```bash
 rm -f seed.spec.ts                                    # the stub; see below, deleting is not a permanent fix
 npx playwright test --list                            # one project, chromium, and the cart spec
-npx playwright test                                   # green against the local app
+npx playwright test                                   # green, about 3 s
 ```
+
+**Which application the suite runs against.** `SAUCE_DEMO_BASE_URL` in `.env` is deliberately empty, so
+`baseURL` falls back to the public `https://www.saucedemo.com/`. Takes 1 and 2 need nothing running
+locally. Only the healer needs the local clone, because its drift is a branch of the application, so set
+the variable to `http://localhost:3000/` for that take and empty it again afterwards.
+
+The fallback is `||` rather than `??` for exactly this reason: `??` lets an empty string through and
+`baseURL` becomes `""`, which fails every relative `goto` with a timeout that looks like a broken test.
 
 Leave the stub in once, before you delete it, and run the suite. It is listed as
 `[chromium] › seed.spec.ts:4:7 › Test group › seed` and reported as `1 passed`: a test that opens
@@ -233,6 +241,34 @@ it touches the mandate. The seed-stub behaviour is unchanged too: 1.63.0 still p
 `references/test-generation.md`, covering the same plan, generate, heal pipeline, whose heal section says
 to **stop and ask the user** when it cannot tell a stale spec from a regression. Two official paths,
 opposite mandates. The `cli` branch of this repository is that second path, set up the same way.
+
+## 4. The other path: one skill instead of three subagents
+
+Recorded, and in the repository that carries `@playwright/cli`, because it pulls a different
+`playwright-core` and would replace the MCP server the other beats depend on.
+
+```bash
+npx playwright-cli install --skills
+```
+
+Then one prompt, which is the whole point of the beat: the two subagent prompts above, merged, because
+the skill covers plan, generate and heal in one file.
+
+```
+Plan and generate Playwright E2E coverage for the shopping cart in this app, using the playwright-cli
+skill. Cover exactly one scenario and no more: a signed-in user adds two products to the cart, the cart
+badge shows the count, the cart page lists both products, and removing one leaves the other. Login,
+checkout, sorting and the burger menu are out of scope. Save the plan to spec/cart.md and the spec under
+tests/.
+```
+
+What to say while it runs, and nothing more: it is the same pipeline, plan then generate then heal,
+driven by one installable skill instead of three subagents. Its mechanic is different, `npx playwright
+test --debug=cli` in the background and `playwright-cli attach` to drive the paused page, and every
+action it takes prints the Playwright line that would perform it. The difference in mandate is a later
+slide; do not spend this beat on it.
+
+Recorded rather than live on purpose: the package is at `0.1.19`, twenty-eight releases in eight months.
 
 ## Fallbacks
 
