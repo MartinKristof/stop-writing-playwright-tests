@@ -13,23 +13,29 @@ repository are forked, and each fork adds project knowledge the agent could not 
 
 | agent | shipped or forked | what the fork adds |
 | --- | --- | --- |
-| planner | forked as `forked-planner` | when the seed applies: only to sections that need a signed-in user, never to the login or access-control sections |
+| planner | forked as `forked-planner` | read the existing specs and page objects first, and do not plan coverage the suite already has |
 | generator | forked as `forked-generator` | read `tests/pages/`, reuse the methods, create a page object if none fits |
 | healer | `forked-healer`, **not used in the demo** | may answer "the app is wrong"; same tool list, all of it in the brief |
 
-That is the "where human judgment is still essential" argument in one table. Playwright's planner cannot
-know this app authenticates through a seed, and certainly cannot know that the login section must
-**not** use it. Its generator has no notion of a page object at all. Its healer needs no project
-knowledge and gets none: `forked-healer` has the same tool list, character for character, and differs
-only in what the brief allows it to conclude. **The demo runs the shipped healer**, because watching
+That is the "where human judgment is still essential" argument in one table. Playwright's planner
+cannot know what this suite already covers, so it plans coverage that exists. Its instructions never
+mention page objects, and neither does its generator's. Its healer needs no project knowledge and gets
+none: `forked-healer` has the same tool list, character for character, and differs only in what the
+brief allows it to conclude.
+
+**Say "its instructions never mention page objects", not "it never writes one".** In the measurement
+behind the talk, the same shipped agents did create a page object, in all five runs of that setup,
+because that repository carries its conventions in `tests/playwright/AGENTS.md` and a skill, and the
+brief said to work the rest out from the repository's own conventions. This repository is deliberately
+bare: no `AGENTS.md`, no skill, nothing that tells anybody anything. That is why it falls over here, and
+that is the real lesson. Project knowledge has to live somewhere the agent reads. **The demo runs the shipped healer**, because watching
 "do the most reasonable thing possible to pass the test" write a defect into a page object is the point
 of that step; the fork is what to copy afterwards.
 
 **On timing:** only Playwright's own agents need to go on video. Record the shipped planner and the
 shipped generator, play those, and show what the fork produced from the repository instead of recording
 it: the forked plan beside the shipped one, and the committed `tests/cart.spec.ts` beside the flat
-`page.click(...)` spec from the recording. Both generators run from the same plan, so the only variable
-is the agent. Show the diff between the two agent files: 60 lines
+`page.click(...)` spec from the recording. Show the diff between the two generator files: 60 lines
 added, 31 removed, almost all of it four bullets telling the agent to read `tests/pages/index.ts` and
 the classes it exports, which is the point.
 
@@ -37,13 +43,13 @@ the classes it exports, which is the point.
 
 ```bash
 rm -f seed.spec.ts                                    # the stub; see below, deleting is not a permanent fix
-npx playwright test --list                            # 2 tests: auth.seed under [setup], cart under [logged user]
-npx playwright test --list --project=setup            # exactly 1
-npx playwright test                                   # green against the local app, ~5 s
+npx playwright test --list                            # one project, chromium, and the cart spec
+npx playwright test                                   # green against the local app
 ```
 
-`--project='logged user'` also lists the seed, because `setup` is its dependency. That is correct and
-not the stub.
+Leave the stub in once, before you delete it, and run the suite. It is listed as
+`[chromium] › seed.spec.ts:4:7 › Test group › seed` and reported as `1 passed`: a test that opens
+nothing and asserts nothing, green. That is the shortest way to make the point on stage.
 
 ### Where the root `seed.spec.ts` comes from, and why `rm` is not the fix
 
@@ -63,34 +69,17 @@ await fs.promises.writeFile(seedFile, ...);
 they do not. **That is why deleting the stub is not a fix:** the scaffold created it, and the next agent
 that sets up a page recreates it silently.
 
-**Which project it collects is the whole trap, and it is the same pick in both paths.** The `--project`
-flag and the tools' `project` parameter are documented as *"if no project is provided uses the first
-project in the config"*. The code does `findTopLevelProjects(config)[0]` instead. `setup` is a dependency
-of `logged user`, so it is not top-level; the first top-level project is `logged user`, whose
-`testIgnore: /.*\.seed\.spec\.ts/` hides the real seed by design. No seed found, stub written, agent
-drives a blank page.
+**No project is collected here, because there is only one, and it has no seed.** `chromium` is the
+first and only top-level project and no file in it has "seed" in its name, so the stub is written every
+time, by the scaffold and by every `setup_page` call after it. Deleting it is housekeeping, not a fix.
 
-**Verified three ways, and this is the cleanest live demo of the trap:**
-
-```bash
-npx playwright init-agents --loop claude                          # Writing file: seed.spec.ts
-npx playwright init-agents --loop claude --project setup           # no seed file written
-npx playwright init-agents --loop claude --project 'logged user'   # Writing file: seed.spec.ts
-```
-
-**The mismatch between the documented fallback and the behaviour is the point.** The documented
-behaviour would have been correct: `setup` really is the first project in the config, and naming it
-explicitly makes the stub not happen at all.
-
-For the agents, the fix is the same parameter, now passed by the two forks:
-
-```bash
-grep -n 'project: "setup"' .claude/agents/forked-planner.md .claude/agents/forked-generator.md
-```
-
-The unforked agents pass neither, so they still write the stub and plan against a blank page. **Leave
-them that way**; that failure is part of the demo. It also means the stub can reappear mid-demo, so
-re-run `rm -f seed.spec.ts` after `init-agents` and after any unforked-agent run.
+**The trap this hides is worth telling even though this repository can no longer show it.** The
+`--project` flag and the tools' `project` parameter are documented as *"if no project is provided uses
+the first project in the config"*. The code does `findTopLevelProjects(config)[0]` instead. In a suite
+where the seed lives in a `setup` project that a `logged user` project depends on, `setup` is not
+top-level, the first top-level project hides the real seed behind its own `testIgnore`, and the agents
+drive a blank page while a perfectly good seed sits in the repository. That is what this repository
+looked like until the demo was simplified, and it is the version most real suites have.
 
 `init-agents` also overwrites `.mcp.json` wholesale rather than merging it. Any other server you had
 configured is gone.
@@ -98,14 +87,13 @@ configured is gone.
 ## 1. Planner
 
 The prompt you type on camera names Playwright's own planner. The fork runs the identical brief with
-one word changed, and its plan is the one already sitting in `spec/cart.md`.
+one word changed.
 
 ```
 Use the playwright-test-planner subagent. Plan Playwright E2E coverage for the shopping cart in this
 app. Cover exactly one scenario and no more: a signed-in user adds two products to the cart, the cart
 badge shows the count, the cart page lists both products, and removing one leaves the other. Login,
-checkout, sorting and the burger menu are out of scope. Use tests/auth.seed.spec.ts as the seed: it
-signs in and leaves the browser on the inventory page. Save the plan to spec/cart.md.
+checkout, sorting and the burger menu are out of scope. Save the plan to spec/cart.md.
 ```
 
 **Why each part is there.**
@@ -113,27 +101,21 @@ signs in and leaves the browser on the inventory page. Save the plan to spec/car
 *One scenario, and "no more".* Without a ceiling the planner plans six and the generator implements two.
 In one throwaway run that cost ten minutes and 47,000 output tokens for work nobody used.
 
-*The seed path, spelled out.* The two **forks** carry it as configuration. The two **unforked** agents
-mention a seed only inside an illustrative todo-app example, so they stay untouched. Saying the real path
-in the prompt as well makes a wrong plan visible rather than silent.
-
-**What the recording shows.** Playwright's planner never passes `project: "setup"` to
-`planner_setup_page`, so the tool falls back to the first top-level project, finds no seed, writes the
-stub and hands it a blank page. It then plans a page it never saw, and the seed path you wrote in the
-prompt changed nothing, because the fix is a parameter of a tool call rather than a sentence in a
-brief.
-
-**The fork is not recorded.** Its prompt is the same text with `forked-planner` in place of
-`playwright-test-planner`, and its plan is what `spec/cart.md` already holds, so put the two plans side
-by side instead of running it again. That order matters for the whole demo: show what Playwright ships,
-and let every fork arrive as a consequence of something that went wrong in front of the audience.
-
 *The out-of-scope list.* Cheaper than trusting "one scenario" alone, and it keeps the demo inside its
 slot.
+
+*"A signed-in user", and nothing about how.* This is the sentence to watch. The suite has no stored
+session, so somebody has to plan the sign-in. The brief does not say so, and neither does Playwright's
+planner know it.
 
 **What is deliberately not said:** which page objects exist, that `tests/pages/` is the convention, which
 selectors to prefer, or what the products are called. All of it is on the page or in the repository, and
 watching it find them is the demo.
+
+**What the fork adds, and why it is not recorded.** `forked-planner` reads what the repository already
+has before it plans, and it knows the suite starts signed out, so the sign-in is step one of its plan.
+Run it in preparation with the same brief, keep its plan, and put the two side by side on stage rather
+than spending a second take on it.
 
 ## 2. Generator
 
@@ -146,13 +128,19 @@ else is in the agent definition, and pointing that out on stage is worth more th
 **the instructions live in a file you own and can edit**.
 
 Only Playwright's generator goes on camera. Its output, a flat spec with no imports, belongs beside the
-committed `tests/cart.spec.ts`, which the fork produced from this same plan.
+committed `tests/cart.spec.ts`, which the fork produced.
 
-Two things to say while it runs:
+Three things to say while it runs:
 
 *It performs every step in the browser before writing it.* The agent's own instructions say "use
 Playwright tool to manually execute it in real-time", then `generator_read_log`, then
 `generator_write_test`. The spec is a transcript of actions that actually worked, not a guess.
+
+*Which is why the starting state matters more than it looks.* `generator_setup_page` hands the agent a
+blank page, so whatever the plan's first step assumes, the agent has to perform for itself and therefore
+writes down. Give it a plan that starts from "the user is signed in" and never says how, and you get a
+spec that opens on `about:blank` and times out on the first click. That is the planner's omission
+arriving one step later, as a test failure with no obvious cause.
 
 *The unforked generator does not mention page objects at all.* Its example writes flat `page.click(...)`
 calls with no imports. `forked-generator` adds four bullets: read `tests/pages/index.ts` and the classes

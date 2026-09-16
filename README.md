@@ -11,11 +11,10 @@ The `cli` branch is the same demo driven by the `playwright-cli` skill instead o
 
 ```
 tests/
-  auth.seed.spec.ts   the seed: signs in and saves .auth/user.json
   cart.spec.ts        the generated cart coverage
   pages/              page objects, what the forked generator reuses
 spec/                 generated test plans (gitignored)
-.claude/agents/       Playwright's three agents plus two forks
+.claude/agents/       Playwright's three agents plus a fork of each
 .claude/settings.json tool permissions
 .mcp.json             the playwright-test MCP server
 ```
@@ -42,14 +41,38 @@ visible text and the test id. That is the drift the healer is asked to repair.
 npm install
 npm run playwright:install
 cp .env.example .env     # USER_NAME, PASSWORD, SAUCE_DEMO_BASE_URL
-npm test                 # 2 tests, green in about 5 s
+npm test                 # green against the local app
 ```
 
-## Projects
+## One project, and no seed
 
-`setup` runs `tests/auth.seed.spec.ts` and writes the storage state. `logged user` depends on it and
-ignores the seed file. There is no `testDir`, so the whole repo is the agents' write sandbox, which is
-what lets the forked generator reach `tests/pages/`.
+The config has a single project, `chromium`, and the repository holds no seed test. That is
+deliberate. Every spec signs in for itself, and nothing hands an agent a starting state it did not
+create.
+
+It also means `init-agents`, and every `planner_setup_page` or `generator_setup_page` call after it,
+finds no file with "seed" in its name and writes a stub at the repository root:
+
+```ts
+test.describe('Test group', () => {
+  test('seed', async ({ page }) => {
+    // generate code here.
+  });
+});
+```
+
+That stub is what the agents actually drive, and it is worth running once:
+
+```
+[chromium] › seed.spec.ts:4:7 › Test group › seed
+1 passed
+```
+
+A test that opens nothing and asserts nothing, reported as a pass. Delete it after any run that wrote
+it.
+
+There is no `testDir`, so the whole repository is the agents' write sandbox, which is what lets the
+forked generator reach `tests/pages/`.
 
 ## Agents
 
@@ -60,7 +83,7 @@ Three agents as Playwright ships them, and a fork of each.
 | `playwright-test-planner` | shipped | |
 | `playwright-test-generator` | shipped | |
 | `playwright-test-healer` | shipped | |
-| `forked-planner` | forked planner | when the seed applies, and when it must not |
+| `forked-planner` | forked planner | read the existing specs and page objects first, and do not plan coverage the suite already has |
 | `forked-generator` | forked generator | read `tests/pages/`, reuse the methods, add one if none fits |
 | `forked-healer` | forked healer | diagnose the cause, and report an application bug rather than write it into the test |
 
@@ -73,9 +96,8 @@ one it is forbidden to ask you questions. That difference is what the talk is ab
 thing possible to pass the test" write a defect into a page object is the point of that step. The fork
 is here as the thing to copy afterwards.
 
-The planner and generator forks pass `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"` to
-their setup tool. The shipped agents pass neither, which is why they write a `seed.spec.ts` stub at the
-repository root and then drive a blank page. That failure is part of the demo, so they stay as they are.
+Every agent here, forked or not, starts from the stub and therefore from a blank page. The difference
+is what each one knows about this repository afterwards.
 
 `npx playwright init-agents --loop claude` rewrites the three shipped agents and `.mcp.json` wholesale,
 leaves the three forks alone, and writes that stub. Run `rm -f seed.spec.ts` after it, and after any run

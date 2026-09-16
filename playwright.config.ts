@@ -25,17 +25,8 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'setup',
-      testMatch: /.*\.seed.spec.ts/,
-    },
-    {
-      name: 'logged user',
-      testIgnore: /.*\.seed\.spec\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: '.auth/user.json',
-      },
-      dependencies: ['setup'],
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
   outputDir: 'test-results',

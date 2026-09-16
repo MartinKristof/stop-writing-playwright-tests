@@ -1,4 +1,5 @@
 {
+  "promptSuggestionEnabled": false,
   "permissions": {
     "allow": [
       "mcp__playwright-test__*",
@@ -13,5 +14,6 @@
   },
   "enabledMcpjsonServers": [
     "playwright-test"
-  ]
+  ],
+  "language": "English"
 }

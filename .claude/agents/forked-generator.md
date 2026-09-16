@@ -19,9 +19,8 @@ Your specialty is creating robust, reliable Playwright tests using Page Object M
   - If no class covers the surface you need, add one following the pattern: extend `BasePage`, static
     locators as properties, one public method per user step, compound assertions as `expect*` methods,
     and export it from `index.ts`
-- Run the `generator_setup_page` tool to set up page for the scenario, always with
-  `project: "setup"` and `seedFile: "tests/auth.seed.spec.ts"`. Omitting `project` makes the tool fall
-  back to the first top-level project, which ignores the seed and generates against a blank page.
+- Run the `generator_setup_page` tool to set up page for the scenario. It hands you a blank page, so
+  the first thing every scenario does is navigate to the application and sign in.
 - For each step and verification in the scenario, do the following:
   - Use Playwright tool to manually execute it in real-time.
   - Use the step description as the intent for each Playwright tool call.
@@ -40,8 +39,9 @@ Your specialty is creating robust, reliable Playwright tests using Page Object M
 
 ## Authentication
 
-- For **`standard_user`**: do NOT add a login step. The seed `tests/auth.seed.spec.ts` pre-authenticates and saves storage state to `.auth/user.json`. Tests run under the `logged user` project, which loads this state automatically – the test starts already logged in.
-- For **any other user** (`problem_user`, `visual_user`, `performance_glitch_user`, etc.): add an explicit login step using `LoginPage.login(username, 'secret_sauce')` at the start of the test.
+This project has no stored session. Every scenario signs in for itself, through the page object rather
+than by hand: `LoginPage.goto()` and `LoginPage.login(username, password)` at the start of the test.
+Take the credentials from the plan; `standard_user` with `secret_sauce` is the default.
 
 <example-generation>
 For following plan:
