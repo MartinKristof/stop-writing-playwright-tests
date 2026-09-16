@@ -15,7 +15,6 @@ no `.mcp.json` and no `.claude/agents/`.
 
 ```
 tests/
-  cart.spec.ts        the generated cart coverage
   pages/              page objects, what the skill reuses
 spec/                 generated test plans (gitignored)
 .claude/skills/       the playwright-cli skill and its references
