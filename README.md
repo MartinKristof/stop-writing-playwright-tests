@@ -15,9 +15,8 @@ no `.mcp.json` and no `.claude/agents/`.
 
 ```
 tests/
-  auth.seed.spec.ts   the seed: signs in and saves .auth/user.json
   cart.spec.ts        the generated cart coverage
-  pages/              page objects
+  pages/              page objects, what the skill reuses
 spec/                 generated test plans (gitignored)
 .claude/skills/       the playwright-cli skill and its references
 .claude/settings.json tool permissions
@@ -45,14 +44,37 @@ visible text and the test id. That is the drift the healer is asked to repair.
 npm install
 npm run playwright:install
 cp .env.example .env     # USER_NAME, PASSWORD, SAUCE_DEMO_BASE_URL
-npm test                 # 2 tests, green in about 5 s
+npm test                 # green against the local app
 ```
 
-## Projects
+## One project, and no seed
 
-`setup` runs `tests/auth.seed.spec.ts` and writes the storage state. `logged user` depends on it and
-ignores the seed file. There is no `testDir`, so the whole repo is the agents' write sandbox, which is
-what lets the forked generator reach `tests/pages/`.
+The config has a single project, `chromium`, and the repository holds no seed test. That is
+deliberate. Every spec signs in for itself, and nothing hands an agent a starting state it did not
+create.
+
+It also means anything that looks for a seed finds no file with "seed" in its name and writes a stub at
+the repository root:
+
+```ts
+test.describe('Test group', () => {
+  test('seed', async ({ page }) => {
+    // generate code here.
+  });
+});
+```
+
+That stub is what the agents actually drive, and it is worth running once:
+
+```
+[chromium] › seed.spec.ts:4:7 › Test group › seed
+1 passed
+```
+
+A test that opens nothing and asserts nothing, reported as a pass.
+
+There is no `testDir`, so the whole repository is the agents' write sandbox, which is what lets the skill
+reach `tests/pages/`.
 
 ## The skill
 

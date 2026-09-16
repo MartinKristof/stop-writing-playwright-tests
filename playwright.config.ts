@@ -5,7 +5,7 @@ import path from 'path';
 // Read from ".env" file.
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const SAUCE_DEMO_BASE_URL = process.env.SAUCE_DEMO_BASE_URL ?? 'https://www.saucedemo.com/';
+const SAUCE_DEMO_BASE_URL = process.env.SAUCE_DEMO_BASE_URL || 'https://www.saucedemo.com/';
 
 export default defineConfig({
   fullyParallel: true,
@@ -25,17 +25,8 @@ export default defineConfig({
   },
   projects: [
     {
-      name: 'setup',
-      testMatch: /.*\.seed.spec.ts/,
-    },
-    {
-      name: 'logged user',
-      testIgnore: /.*\.seed\.spec\.ts/,
-      use: {
-        ...devices['Desktop Chrome'],
-        storageState: '.auth/user.json',
-      },
-      dependencies: ['setup'],
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
   outputDir: 'test-results',
