@@ -1,6 +1,7 @@
-# Stop Writing Playwright Tests: the CLI variant
+# Nobody Writes Playwright Tests Any More: the CLI variant
 
-The CLI half of the stage demo. Same suite, same app, same seed as `main`, but the browser is reached
+The CLI half of the stage demo. The repository slug keeps the earlier title the two sent abstracts
+went out with, "Stop Writing Playwright Tests: Let AI Generate Them". Same suite, same app, same seed as `main`, but the browser is reached
 through the `playwright-cli` skill instead of three subagents over the test MCP server.
 
 Branched from `main`, and `git diff main cli` is the whole difference: Playwright moves to the 1.64
@@ -8,6 +9,9 @@ alpha, `@playwright/cli` is installed, `.claude/skills/playwright-cli/` holds th
 no `.mcp.json` and no `.claude/agents/`.
 
     npx playwright-cli install --skills   # reinstalls the skill in place
+
+`METHOD.md` is how to measure this on your own repository instead of taking the talk's numbers:
+one afternoon, six runs, and the two ways the measurement lied to me first.
 
 `RUNBOOK.md` has the prompts and what each step is meant to show.
 

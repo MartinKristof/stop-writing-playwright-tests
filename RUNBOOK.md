@@ -1,6 +1,6 @@
 # The three prompts, and what each step is meant to show
 
-The demo behind the talk "Stop Writing Playwright Tests: Let AI Generate Them". One journey, the cart,
+The demo behind the talk "Nobody Writes Playwright Tests Any More. Generate Them Right.". One journey, the cart,
 chosen because it is visual, uses page objects that already exist, and finishes in a few minutes rather
 than ten.
 
@@ -236,9 +236,16 @@ remediation step and closes with:
 > Do not ask user questions, you are not interactive tool, do the most reasonable thing possible to pass
 > the test.
 
-Its one escape hatch, `test.fixme()`, is conditioned on "if the error persists", so it never fires here:
-the carta drift is trivially passable, so the agent never reaches the branch where it is allowed to
-conclude the test was right.
+Its one escape hatch, `test.fixme()`, is conditioned on "if the error persists", and the prediction
+written here was that it never fires on a trivially passable drift. **The rehearsal of 16 September
+refuted that.** With the neutral prompt above, the healer parked the failing test and reported the
+application as broken rather than re-keying the locator, and a parked test leaves the suite green: the
+check is gone and the defect is not. The artifacts are on `main`:
+`playwright-report/data/907e2737….md` holds the snapshot with the "Add to carta" buttons, so it saw the
+drift correctly and chose the diagnosis. The conforming outcome, run 5 in the pilot's
+`results/drift/README.md`, came from a brief that added "update the values in the spec to whatever the
+app actually serves". Same agent, same drift, opposite endings, and what differed was the sentence
+above it.
 
 That line, and the remediation list above it, are byte-identical in 1.56.1, in today's stable 1.63.0 and
 in `playwright@1.64.0-alpha-2026-09-04`. The 1.63.0 file does differ from 1.56.1, by 34 lines: the agent
