@@ -1,7 +1,12 @@
-# Stop Writing Playwright Tests: Let AI Generate Them
+# Nobody Writes Playwright Tests Any More. Generate Them Right.
 
-The repository used on stage in the talk. A small Playwright suite for SauceDemo, driven by Playwright's
-own agents through the test MCP server.
+The repository used on stage in the talk. The repository slug keeps the earlier title the two sent
+abstracts went out with, "Stop Writing Playwright Tests: Let AI Generate Them".
+
+A small Playwright suite for SauceDemo, driven by Playwright's own agents through the test MCP server.
+
+`METHOD.md` is how to measure this on your own repository instead of taking the talk's numbers:
+one afternoon, six runs, and the two ways the measurement lied to me first.
 
 `RUNBOOK.md` has the three prompts, what each step is meant to show, and the traps worth knowing about.
 The `cli` branch is the same demo driven by the `playwright-cli` skill instead of three subagents:

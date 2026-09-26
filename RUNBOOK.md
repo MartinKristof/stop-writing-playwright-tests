@@ -1,6 +1,6 @@
 # The three prompts, and what each step is meant to show
 
-The demo behind the talk "Stop Writing Playwright Tests: Let AI Generate Them". One journey, the cart,
+The demo behind the talk "Nobody Writes Playwright Tests Any More. Generate Them Right.". One journey, the cart,
 chosen because it is visual, uses page objects that already exist, and finishes in a few minutes rather
 than ten.
 
