@@ -5,6 +5,10 @@ abstracts went out with, "Stop Writing Playwright Tests: Let AI Generate Them".
 
 A small Playwright suite for SauceDemo, driven by Playwright's own agents through the test MCP server.
 
+`artifacts/` holds what each of the three paths produced from the same brief: the plan and the spec
+written by the shipped subagents (`stock/`), by the forked ones (`fork/`) and by the `playwright-cli`
+skill (`cli/`). The plans are the interesting half: each one says what its author read first.
+
 `METHOD.md` is how to measure this on your own repository instead of taking the talk's numbers:
 one afternoon, six runs, and the two ways the measurement lied to me first.
 

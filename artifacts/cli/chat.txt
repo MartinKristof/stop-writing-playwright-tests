@@ -1,0 +1,22 @@
+Done. One scenario planned, generated, and verified green.
+
+Files
+- spec/cart.md — the plan: one group, one scenario, steps with expect: bullets, plus notes on what I observed in the live app.
+- tests/cart.spec.ts — the spec, one test, built on the existing page objects in tests/pages/.
+- tests/seed.spec.ts — new. The repo had no seed, and the skill's workflow needs one that lands on the signed-in products page.
+
+Verified
+- npx tsc --noEmit clean.
+- Full suite with --repeat-each=3: 6 passed, no flakes.
+
+Things you should know
+
+The skill's core mechanic does not work in this repo. It wants npx playwright test --debug=cli plus playwright-cli attach tw-XXXX, but Playwright 1.56.1 has neither --debug=cli nor a playwright cli subcommand, and no global playwright-cli is installed. I ran the standalone npx @playwright/cli@latest (0.1.20) in its own session and reproduced the seed's login by hand instead of attaching to a paused test. Nothing was added to package.json.
+
+A standalone CLI session does not read testIdAttribute: 'data-test' from playwright.config.ts, so getByTestId('add-to-cart-...') found nothing there and I had to use [data-test="..."]. Inside the test the config applies and the page objects work as written.
+
+I did not use CartPage.expectItemCount, expectItemInCart, or expectItemNotInCart. All three call count() or textContent() outside expect(), so they read the DOM once with no retry, and the read right after clicking Remove is a race. I used await expect(cartPage.cartItemNames).toHaveText([...]) on the page object's own locator, which retries and pins count and order in one assertion.
+
+spec/ is in .gitignore, so spec/cart.md will not be committed as things stand. Say the word if that should change.
+
+Sign-in is in the spec as step 1. It is the scenario's precondition, not coverage of the login feature, so nothing asserts login behaviour beyond landing on the products page.
