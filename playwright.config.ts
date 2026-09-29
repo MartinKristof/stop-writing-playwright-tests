@@ -8,6 +8,8 @@ dotenv.config({ path: path.resolve(__dirname, '.env') });
 const SAUCE_DEMO_BASE_URL = process.env.SAUCE_DEMO_BASE_URL || 'https://www.saucedemo.com/';
 
 export default defineConfig({
+  // No testDir: the whole repository is the agents' write sandbox. artifacts/ holds specs to read, not run.
+  testIgnore: '**/artifacts/**',
   fullyParallel: true,
   retries: 1,
   reporter: [
